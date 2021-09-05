@@ -7,7 +7,7 @@ const modalRoot = document.querySelector('#modal-root');
 const Modal = ({ onClose, modalImg }) => {
   useEffect(() => {
     window.addEventListener('keydown', closeModalOnEscape);
-    window.removeEventListener('keydown', closeModalOnEscape);
+    return () => window.removeEventListener('keydown', closeModalOnEscape);
   });
 
   const closeModalOnEscape = e => {
@@ -18,6 +18,9 @@ const Modal = ({ onClose, modalImg }) => {
 
   const omBackdropClick = e => {
     if (e.currentTarget === e.target) {
+      onClose();
+    }
+    if (e.code === 'Escape') {
       onClose();
     }
   };

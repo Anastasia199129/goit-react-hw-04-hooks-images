@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes, { number } from 'prop-types';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import LoaderHearts from '../loader/Loader';
 import s from './searchbar.module.css';
@@ -10,22 +10,6 @@ import ImageGalleryItem from '../imageGalleryItem/ImageGalleryItem';
 import Modal from '../modal/Modal';
 
 const API_KEY = '22334770-5fe06baa3562bf01c1a6f3fbc';
-
-//         if (response.status === 200) {
-//           setImages({ ...response.data.hits });
-//         }
-//         if (images.length === 0) {
-//           toast.error('По такому запросу картинки не найденны!');
-//         }
-//         setLoading(false);
-
-//         if (response.status === 400) {
-//           setError('картинки по вашему зыпросу не найдены');
-//         }
-//       })
-//       .catch(error => console.error(error));
-//   });
-// }
 
 const Searchbar = ({ onSubmit }) => {
   const [value, setValue] = useState('');
@@ -42,19 +26,30 @@ const Searchbar = ({ onSubmit }) => {
       return;
     }
     setLoading(true);
+    const fetch = () => {
+      return axios
+        .get(
+          `https://pixabay.com/api/?q=${searchValue}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`,
+        )
+        .then(response => {
+          if (response.status === 200) {
+            setLoading(false);
+            return response.data.hits;
+          }
+        });
+    };
     fetch()
       .then(resp => {
         setImages(prevState => [...prevState, ...resp]);
+        if (resp.length === 0) {
+          toast.error('По такому запросу картинки не найденны!');
+        }
         if (images.length > 11) {
           window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: 'smooth',
           });
         }
-        if (images.length === 0) {
-          toast.error('По такому запросу картинки не найденны!');
-        }
-
         if (resp.status === 400) {
           setError('картинки по вашему зыпросу не найдены');
         }
@@ -62,21 +57,8 @@ const Searchbar = ({ onSubmit }) => {
       .catch(error => setError(error));
   }, [searchValue, page]);
 
-  const fetch = () => {
-    return axios
-      .get(
-        `https://pixabay.com/api/?q=${searchValue}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`,
-      )
-      .then(response => {
-        if (response.status === 200) {
-          setLoading(false);
-          return response.data.hits;
-        }
-      });
-  };
-
   const onButtonClick = e => {
-    setPage(prevState => prevState.page + 1);
+    setPage(page + 1);
   };
 
   const onChangeHandler = e => {
@@ -88,19 +70,21 @@ const Searchbar = ({ onSubmit }) => {
   };
 
   const togleModal = () => {
-    setShowModal(!showModal);
+    setShowModal(pevShowModal => !pevShowModal);
   };
 
   const onItemClick = e => {
     setLargeImeges(e);
     togleModal();
   };
+
   const onSubmitForm = e => {
     e.preventDefault();
     if (value.trim() === '') {
       toast.warn('Заполните поле поиска!');
       return;
     }
+
     setSearchValue(value);
     onSubmit(value);
     reset();
