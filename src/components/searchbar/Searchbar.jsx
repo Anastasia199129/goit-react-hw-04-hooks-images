@@ -134,6 +134,7 @@ Searchbar.propTypes = {
   loading: PropTypes.bool,
   showModal: PropTypes.bool,
   largeImeges: PropTypes.string,
+  onSubmit: PropTypes.func,
 };
 
 export default Searchbar;

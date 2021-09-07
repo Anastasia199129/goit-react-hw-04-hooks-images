@@ -1,5 +1,6 @@
 import React from 'react';
 import s from './imageGalleryItem.module.css';
+import PropTypes from 'prop-types';
 
 const ImageGalleryItem = ({ onClick, imagesAray }) => {
   const largeImgesModal = largeImageURL => {
@@ -11,6 +12,11 @@ const ImageGalleryItem = ({ onClick, imagesAray }) => {
       <img src={webformatURL} alt={tags} className={s.ImageGalleryItemImage} />
     </li>
   ));
+};
+
+ImageGalleryItem.propTypes = {
+  onClick: PropTypes.func,
+  imagesAray: PropTypes.array,
 };
 
 export default ImageGalleryItem;
